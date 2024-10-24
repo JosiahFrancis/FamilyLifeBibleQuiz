@@ -252,68 +252,71 @@ const questions = [
 ];
 
 
-        let currentQuestion = 0;
-        let score = 0;
-        let shuffledOptions = [];
+let currentQuestion = 0;
+let score = 0;
+let shuffledOptions = [];
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
 
-        function loadQuestion() {
-            const q = questions[currentQuestion];
-            document.querySelector('.question').textContent = q.question;
+function loadQuestion() {
+    const q = questions[currentQuestion];
+    document.querySelector('.question').textContent = q.question;
 
-            // Clear previous options
-            const optionsContainer = document.querySelector('.options');
-            optionsContainer.innerHTML = '';
+    // Display progress
+    document.querySelector('.progress').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
 
-            // Shuffle options before displaying them
-            shuffledOptions = [...q.options];
-            shuffleArray(shuffledOptions);
+    // Clear previous options
+    const optionsContainer = document.querySelector('.options');
+    optionsContainer.innerHTML = '';
 
-            // Render options
-            shuffledOptions.forEach((option, index) => {
-                const label = document.createElement('label');
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = 'option';
-                radio.value = index;
-                label.appendChild(radio);
-                label.appendChild(document.createTextNode(option));
-                optionsContainer.appendChild(label);
-            });
+    // Shuffle options before displaying them
+    shuffledOptions = [...q.options];
+    shuffleArray(shuffledOptions);
 
-            document.querySelector('.result').textContent = '';
-        }
+    // Render options
+    shuffledOptions.forEach((option, index) => {
+        const label = document.createElement('label');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'option';
+        radio.value = index;
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(option));
+        optionsContainer.appendChild(label);
+    });
 
-        function submitAnswer() {
-            const selectedOption = document.querySelector('input[name="option"]:checked');
-            if (!selectedOption) {
-                alert("Please select an answer!");
-                return;
-            }
+    document.querySelector('.result').textContent = '';
+}
 
-            const selectedAnswer = shuffledOptions[parseInt(selectedOption.value)];
-            const correctAnswer = questions[currentQuestion].options[questions[currentQuestion].answer];
+function submitAnswer() {
+    const selectedOption = document.querySelector('input[name="option"]:checked');
+    if (!selectedOption) {
+        alert("Please select an answer!");
+        return;
+    }
 
-            if (selectedAnswer === correctAnswer) {
-                score++;
-                document.querySelector('.result').textContent = "Correct!";
-            } else {
-                document.querySelector('.result').textContent = `Incorrect! Correct answer: ${correctAnswer}`;
-            }
+    const selectedAnswer = shuffledOptions[parseInt(selectedOption.value)];
+    const correctAnswer = questions[currentQuestion].options[questions[currentQuestion].answer];
 
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                setTimeout(loadQuestion, 1000);
-            } else {
-                document.querySelector('.result').textContent = `Quiz completed! Your score: ${score}/${questions.length}`;
-                document.querySelector('.btn').style.display = 'none';
-            }
-        }
+    if (selectedAnswer === correctAnswer) {
+        score++;
+        document.querySelector('.result').textContent = "Correct!";
+    } else {
+        document.querySelector('.result').textContent = `Incorrect! Correct answer: ${correctAnswer}`;
+    }
 
-        window.onload = loadQuestion;
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+        setTimeout(loadQuestion, 1000);
+    } else {
+        document.querySelector('.result').textContent = `Quiz completed! Your score: ${score}/${questions.length}`;
+        document.querySelector('.btn').style.display = 'none';
+    }
+}
+
+window.onload = loadQuestion;
